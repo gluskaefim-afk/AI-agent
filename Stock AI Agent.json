@@ -1,0 +1,488 @@
+{
+  "name": "My workflow 4",
+  "nodes": [
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ 885953247 }}",
+        "contextWindowLength": 10
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        80,
+        464
+      ],
+      "id": "5f6db2ab-ba40-4ac3-be9d-510e3f77cc2a",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ 885953247 }}",
+        "text": "={{ $json.text }}",
+        "additionalFields": {
+          "appendAttribution": false,
+          "parse_mode": "Markdown"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        592,
+        0
+      ],
+      "id": "a6826afa-c9aa-4a92-b9d9-49c17ca40d56",
+      "name": "Telegram",
+      "webhookId": "0e9be71c-28bb-49d2-a2c0-3b26458b5866",
+      "credentials": {
+        "telegramApi": {
+          "id": "oCcQneHUnp1Em64u",
+          "name": "Telegram account 7"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "updates": "={{ [\"message\"] }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -624,
+        0
+      ],
+      "id": "6bab5ce1-925b-4798-a2da-b1cf41472695",
+      "name": "Telegram Trigger",
+      "webhookId": "4e793c4c-3430-4a47-89a5-d612b9069157",
+      "credentials": {
+        "telegramApi": {
+          "id": "jC7PvVSlH6GmXvRA",
+          "name": "Telegram account 6"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Get rows from sheet in Microsoft Excel 365",
+        "resource": "worksheet",
+        "operation": "readRows",
+        "workbook": {
+          "__rl": true,
+          "value": "74DCE1D06B998442!s389f8901ea9145409c52e184c34bf66a",
+          "mode": "list",
+          "cachedResultName": "logistics_dataset",
+          "cachedResultUrl": "https://onedrive.live.com/personal/74dce1d06b998442/_layouts/15/doc.aspx?resid=389f8901-ea91-4540-9c52-e184c34bf66a&cid=74dce1d06b998442"
+        },
+        "worksheet": {
+          "__rl": true,
+          "value": "{F0FB1EBC-8660-4434-BA5C-BBC72E1C4ED7}",
+          "mode": "list",
+          "cachedResultName": "for_AI",
+          "cachedResultUrl": "https://onedrive.live.com/personal/74dce1d06b998442/_layouts/15/doc.aspx?resid=389f8901-ea91-4540-9c52-e184c34bf66a&cid=74dce1d06b998442&activeCell=for_AI!A1"
+        },
+        "useRange": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Select_a_Range', ``, 'boolean') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.microsoftExcelTool",
+      "typeVersion": 2.2,
+      "position": [
+        464,
+        400
+      ],
+      "id": "e10ae723-bd0c-4b29-9657-07789107dd67",
+      "name": "Get rows from sheet in Microsoft Excel 365",
+      "credentials": {
+        "microsoftExcelOAuth2Api": {
+          "id": "LgPmypkoUNC6XuZz",
+          "name": "Microsoft Excel account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 10
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -624,
+        368
+      ],
+      "id": "d4e29c51-bf43-4d83-a544-956681408481",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "6a2b55e5-8b29-4591-9234-2406f8f416be",
+              "name": "input",
+              "value": "Check Stock",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "include": "selected",
+        "includeFields": "input",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -336,
+        368
+      ],
+      "id": "3c70f1a6-12e0-41a9-a564-14ee539f2e5a",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-5-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        -112,
+        448
+      ],
+      "id": "d9fdf8c2-0e6b-4774-9fc0-1ea2a9bbae11",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "YxMAoxaeyKDTKuVv",
+          "name": "OpenAi account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.input }}",
+        "options": {
+          "systemMessage": "=If a message contains the phrase \"Check Stock\", you must perform a stock validation using Excel.\n\nOpen the Excel file and select the relevant inventory data.\n\nFor each SKU, calculate the required purchase quantity as:\nTarget Stock minus Current Stock.\n\nIf the calculated required purchase quantity equals zero, do not output this SKU.\n\nIf the calculated required purchase quantity is greater than zero, output it using the exact format below.\n\nOutput format:\nSKU - Required to purchase: \"required quantity\"\n\nOutput all SKUs that require additional purchase. Do not add explanations, comments, tables, or summaries.\n\nIf a message is \"Check OTD\", you must perform an OTD validation.\n\nOpen the Excel file and look for OTD data in the sheet named for_AI2.\nIf the sheet for_AI2 does not exist, search for OTD data in other Excel sheets or files.\n\nIdentify the current OTD percentage and the previous OTD percentage.\n\nCalculate the difference between the current OTD and the previous OTD in percentage points.\n\nOutput the current OTD, the previous OTD, and the difference.\n\nIf a message contains a specific question or any command other than \"Check Stock\" or \"Check OTD\", answer the question or perform the requested task separately and do not apply the rules above."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.8,
+      "position": [
+        0,
+        0
+      ],
+      "id": "45db1dcf-0105-4a49-a6eb-c8cc55e01ff8",
+      "name": "Stock Manager AI",
+      "retryOnFail": false,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "6a2b55e5-8b29-4591-9234-2406f8f416be",
+              "name": "input",
+              "value": "={{ $json.message.text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "include": "selected",
+        "includeFields": "input",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -336,
+        0
+      ],
+      "id": "d7469626-2f7c-4e78-8196-d1de66036cae",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "02937f9d-2d8e-4527-9d41-c043bbd7f8bd",
+              "name": "text",
+              "value": "={{ $json.output.replace(/[_*[\\]()~`>#+=|{}.!]/g, '\\\\$&') }}\n",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        352,
+        0
+      ],
+      "id": "ee10229d-6020-4174-9890-818d4491a1e8",
+      "name": "Edit Fields2"
+    },
+    {
+      "parameters": {
+        "content": "Inventory AI",
+        "height": 736,
+        "width": 1616
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -768,
+        -80
+      ],
+      "typeVersion": 1,
+      "id": "9467d3f2-1528-420f-8314-97048b83e0c9",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Get rows from sheet in Microsoft Excel 365",
+        "resource": "worksheet",
+        "operation": "readRows",
+        "workbook": {
+          "__rl": true,
+          "value": "74DCE1D06B998442!s389f8901ea9145409c52e184c34bf66a",
+          "mode": "list",
+          "cachedResultName": "logistics_dataset",
+          "cachedResultUrl": "https://onedrive.live.com/personal/74dce1d06b998442/_layouts/15/doc.aspx?resid=389f8901-ea91-4540-9c52-e184c34bf66a&cid=74dce1d06b998442"
+        },
+        "worksheet": {
+          "__rl": true,
+          "value": "{6F2A3422-1F6D-4033-BA07-6A1402B79F26}",
+          "mode": "list",
+          "cachedResultName": "for_AI2",
+          "cachedResultUrl": "https://onedrive.live.com/personal/74dce1d06b998442/_layouts/15/doc.aspx?resid=389f8901-ea91-4540-9c52-e184c34bf66a&cid=74dce1d06b998442&activeCell=for_AI2!A1"
+        },
+        "useRange": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Select_a_Range', ``, 'boolean') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.microsoftExcelTool",
+      "typeVersion": 2.2,
+      "position": [
+        272,
+        432
+      ],
+      "id": "a6893b1f-d902-4854-b79b-cb28c7b52761",
+      "name": "Get rows from sheet in Microsoft Excel ",
+      "credentials": {
+        "microsoftExcelOAuth2Api": {
+          "id": "LgPmypkoUNC6XuZz",
+          "name": "Microsoft Excel account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 10
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -624,
+        192
+      ],
+      "id": "e06749c5-c3bc-46d5-9685-ac14ecc684cf",
+      "name": "Schedule Trigger1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "6a2b55e5-8b29-4591-9234-2406f8f416be",
+              "name": "input",
+              "value": "Check OTD",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "include": "selected",
+        "includeFields": "input",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -336,
+        192
+      ],
+      "id": "eb662dcf-dedc-4eee-98e5-896931c19e4f",
+      "name": "Edit Fields3"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "Stock Manager AI",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get rows from sheet in Microsoft Excel 365": {
+      "ai_tool": [
+        [
+          {
+            "node": "Stock Manager AI",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Stock Manager AI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Stock Manager AI",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Stock Manager AI": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "Stock Manager AI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields2": {
+      "main": [
+        [
+          {
+            "node": "Telegram",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get rows from sheet in Microsoft Excel ": {
+      "ai_tool": [
+        [
+          {
+            "node": "Stock Manager AI",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger1": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields3": {
+      "main": [
+        [
+          {
+            "node": "Stock Manager AI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "f19b448d-b9ef-4807-91a7-7389a9dabd37",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "3f783ea318f500157abba70d487c3a9328c59cc7bb6cfb7901014cc6b7a70814"
+  },
+  "id": "8iXYkOezbKxP7o-wqVCfc",
+  "tags": []
+}
